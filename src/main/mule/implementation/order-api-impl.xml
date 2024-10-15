@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:file="http://www.mulesoft.org/schema/mule/file"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+	<file:config name="File_Config" doc:name="File Config" doc:id="9177cc5c-51c9-43dd-b821-63360f90acf4" />
+	<sub-flow name="order-api-impl-sub-flow" doc:id="0bc417d4-6032-41cc-8726-a3f672ba6fa1" >
+		<set-variable value="#[attributes.queryParams.status]" doc:name="Set Variable" doc:id="c033cbd7-8b9f-4866-affe-3fc6c55de4b3" variableName="orders"/>
+		<file:read doc:name="read-the-excel-file" doc:id="0321298d-34e7-4f20-b9d8-639464671350" config-ref="File_Config" path="#[attributes.queryParams.filepath]"/>
+		<ee:transform doc:name="convert-payload-to-json" doc:id="472d702d-d9ec-40ec-b9b9-7424db1456b9" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<ee:transform doc:name="filter-the-fields" doc:id="66d5362e-37f8-4f13-922a-fa5e9976dc05" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+
+---
+payload map ((item, index) ->{
+    "region": item.Region,
+    "orderId":item."Order ID",
+    "OrderStatus":item."OrderStatus",
+    "totalCost":round(item."Total Cost"),
+    "shipDate":item."Ship Date" 
+} )]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<ee:transform doc:name="filter-the-orderstatus-records" doc:id="7f7d9a7e-0f6f-493c-90d0-1497e0c61313" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+var OrderStatus = vars.orders
+---
+if(OrderStatus == "active") {
+   active : (payload filter ((item, index) -> item."OrderStatus" == "active" ))
+}  else if(OrderStatus == "inactive") {
+    inactive:(payload filter ((item, index) -> item."OrderStatus" == "inactive" ))
+    } else {
+    message:"invalid OrderStatus"
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<ee:transform doc:name="payload" doc:id="dd882763-33c9-4e5d-929d-6383d01ae33a" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="d3fa68da-ed6a-4401-b3a1-0370caab0108" message='#["check the filtered output"]'/>
+	</sub-flow>
+</mule>

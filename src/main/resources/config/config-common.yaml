@@ -1,0 +1,4 @@
+application:
+  name: "sample-app"
+milestone:
+  category: "LOG"

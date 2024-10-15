@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="154a438c-1310-4797-8e21-c74388910652" >
+		<http:listener-connection host="localhost" port="${http.port}" readTimeout="${http.timeout}"/>
+	</http:listener-config>
+	<db:config name="Database_Config" doc:name="Database Config" doc:id="31544b3b-bcae-4470-9dc1-680e55f419b7" >
+		<db:my-sql-connection host="127.0.0.1" port="3306" user="root" password="Pavana@8319" database="orderapi" />
+	</db:config>
+	<configuration-properties doc:name="Configuration properties" doc:id="f1de4da6-5dd3-423b-ad54-c45de75118c4" file="config/config-${mule.env}.yaml" />
+	<global-property doc:name="Global Property" doc:id="e1f04a6f-f525-4def-8927-df6777ec5f2f" name="mule.env" value="dev" />
+</mule>

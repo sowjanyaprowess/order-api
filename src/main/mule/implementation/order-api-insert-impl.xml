@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:file="http://www.mulesoft.org/schema/mule/file"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+	<file:config name="File_Config1" doc:name="File Config" doc:id="9c371c41-fdd2-481a-a910-25ef9ba3d1ea" />
+	<file:config name="File_Config2" doc:name="File Config" doc:id="e3d872b6-2f60-4c22-8597-7e271d31659a" />
+	<sub-flow name="order-api-insert-impl-sub-flow" doc:id="be55f946-bc9b-4dc7-86f0-178e650aba95" >
+		<logger level="INFO" doc:name="Logger" doc:id="72c53d73-d3b3-49f9-b6d9-22638a53d27b" />
+		<file:read doc:name="read-the-excel-file" doc:id="7a8b86ce-e0e1-489f-a2e2-3db0606a5fe6" config-ref="File_Config" path="#[payload.filepath]" />
+		<ee:transform doc:name="convert-payload-to-json" doc:id="c74ce3f4-cdf8-4887-b40a-4607c68ad3bc" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<ee:transform doc:name="filter-the-fields" doc:id="903883f6-0f06-4914-8291-c3a96f2d49e4" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+
+---
+payload map ((item, index) ->{
+    "Region": item.Region,
+    "Order ID":item."Order ID",
+    "OrderStatus":item."OrderStatus",
+    "Total Cost":round(item."Total Cost"),
+    "Ship Date":item."Ship Date" 
+} )]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<ee:transform doc:name="groupby-orderstatus" doc:id="d3183221-1a7b-40c5-8bec-ae8ad80f351b" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload groupBy ((item, index) -> item.OrderStatus)
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<file:write doc:name="write-the-payload" doc:id="156d2144-a02a-4870-9c20-10538fec1f7c" config-ref="File_Config1" path="C:\Users\91797\write\active.txt" />
+		<ee:transform doc:name="success-message" doc:id="02c75478-e5f3-4535-ba44-15d7125586a4" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"message":"succesfully stored"
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="14be8e39-9dcb-45f2-ab7d-1af0929c2068" message='#["inserted successfully"]'/>
+	</sub-flow>
+</mule>
