@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="order-api-test.xml" />
+	<munit:test name="order-api-test-order-api-insert-impl-sub-flowTest" doc:id="add5ddf3-a81d-4c41-9fcf-21c343476af9" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="2f4d4eb7-3b60-49ab-9032-9ffdc906cf74" processor="file:write">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="156d2144-a02a-4870-9c20-10538fec1f7c" attributeName="doc:id" />
+					<munit-tools:with-attribute whereValue="File_Config1" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="1adf7fc5-ea77-4cde-a456-048459db52cf" >
+				<munit:payload value='#[{&#10;"filepath":"C:/Users/91797/orderdetails/OrderDetails.csv"&#10;}]' />
+			</munit:set-event>
+			<flow-ref doc:name="Flow-ref to order-api-insert-impl-sub-flow" doc:id="f2133d22-7add-488d-95d2-2a45953808f0" name="order-api-insert-impl-sub-flow"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="5995d2a1-e2ee-49e7-9059-8f70388d0153" expression="#[payload]" is="#[MunitTools::notNullValue()]"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="order-api-test-e-commerce-api-mainTest" doc:id="cde29f7f-d41d-4bc0-a92d-59440e6e53d3" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="b51938f6-b866-4854-9046-8be29b3284fc" processor="apikit:router">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="e-commerce-api-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to e-commerce-api-main" doc:id="70de512b-94f5-402d-a547-a09be3bce57a" name="e-commerce-api-main"/>
+		</munit:execution>
+	</munit:test>
+	<munit:test name="order-api-test-e-commerce-api-consoleTest" doc:id="1abdb768-fe7b-4d1d-ab7b-15205419e62b" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="22aa0517-09d1-47c4-a1a4-f514c229a133" processor="apikit:console">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="e-commerce-api-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to e-commerce-api-console" doc:id="f225efa1-aeeb-48b9-9b7d-009b2deaaf56" name="e-commerce-api-console"/>
+		</munit:execution>
+	</munit:test>
+	<munit:test name="order-api-test-get:\retreiveorder:e-commerce-api-configTest" doc:id="94383f69-af58-49ec-a96b-4e37321fda08" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="f662c776-aba7-45c0-b072-c71511a0bfc5" processor="flow-ref">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="9815378f-2365-4845-a4e2-ce1560c031eb" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to get:\retreiveorder:e-commerce-api-config" doc:id="c95069be-0047-4e7f-8a0a-fa29cf3b54ce" name="get:\retreiveorder:e-commerce-api-config"/>
+		</munit:execution>
+	</munit:test>
+	<munit:test name="order-api-test-post:\insert:application\json:e-commerce-api-configTest" doc:id="2908da0e-e07c-478e-b1b5-f56dff6c020e" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="0445bf87-5e99-4615-9e2d-2c65826dd93b" processor="flow-ref">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="0e0dfd67-5141-4966-b888-a8a570ac98f8" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to post:\insert:application\json:e-commerce-api-config" doc:id="1e451cc4-6324-4c2d-95ba-098797f25f33" name="post:\insert:application\json:e-commerce-api-config"/>
+		</munit:execution>
+	</munit:test>
+	<munit:test name="order-api-test-order-api-impl-sub-flowTest" doc:id="d7b78af8-ba6a-4429-9ae3-01a1438e2909" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="350b9bcf-d34b-432f-abf2-8e057377edb6" processor="ee:transform">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="472d702d-d9ec-40ec-b9b9-7424db1456b9" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:attributes value='#["queryParams":{"status":"inactive"}]' />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="25497dd6-6faa-4133-895a-7e4cdc10da15" >
+				<munit:attributes value='#["queryParams":{"status":"inactive"}]' />
+			</munit:set-event>
+			<flow-ref doc:name="Flow-ref to order-api-impl-sub-flow" doc:id="d03c98b2-bec8-4bc6-ad0b-252dc382a96d" name="order-api-impl-sub-flow"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="df244122-939a-41ca-9a0b-bc056ffae288" is="#[MunitTools::notNullValue()]" expression="#[payload]"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="APIKIT:BAD_REQUEST" doc:id="36225095-8f3d-4988-b715-f93741e6bb60" expectedErrorType="APIKIT:BAD_REQUEST">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="6e84f6d3-c21d-4f87-a289-4d56a42e5822" processor="apikit:router">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="e-commerce-api-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="APIKIT:BAD_REQUEST" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow Reference" doc:id="6bbcbfcc-f63b-4288-8b4b-03b80cdf4fd7" name="e-commerce-api-main"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="d6f29817-959a-4a7d-bc8f-4a7a300cdbaa" is="#[MunitTools::notNullValue()]" expression="#[payload]"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="APIKIT:NOT_FOUND" doc:id="1a69d3b6-f26d-4838-bcf0-9ca48df8c6f2" expectedErrorType="APIKIT:NOT_FOUND">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="3641a590-9613-4332-a99c-9071cd005258" processor="apikit:router">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="e-commerce-api-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="APIKIT:NOT_FOUND" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow Reference" doc:id="a176fd63-422d-42f4-b399-3363bef8ddc1" name="e-commerce-api-main"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="85a69e6a-8506-4001-8937-05944c3e2f91" is="#[MunitTools::notNullValue()]" expression="#[payload]"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="APIKIT:METHOD_NOT_ALLOWED" doc:id="a750b07d-32f2-463d-9cfd-a78acb8e9d01" expectedErrorType="APIKIT:METHOD_NOT_ALLOWED">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="422f74e2-02fc-4b7f-93b6-a263a58df152" processor="apikit:router">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="e-commerce-api-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="APIKIT:METHOD_NOT_ALLOWED" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow Reference" doc:id="59ebd7d2-ba61-4dab-89a1-d3b683a6858a" name="e-commerce-api-main"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="9491c1a4-58b4-47b1-911d-5c2c14d68c2c" is="#[MunitTools::notNullValue()]" expression="#[payload]"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="APIKIT:NOT_ACCEPTABLE" doc:id="bf6400f9-d8d5-4224-bb75-d096d4057424" expectedErrorType="APIKIT:NOT_ACCEPTABLE">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="dc1e2988-6660-4ea7-8d97-77bce86e8954" processor="apikit:router">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="e-commerce-api-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="APIKIT:NOT_ACCEPTABLE" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow Reference" doc:id="a9df5a32-9795-4c41-9f3a-ac30172d9c6a" name="e-commerce-api-main"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="36d07b06-a487-4f3f-803a-a82764c2b115" is="#[MunitTools::notNullValue()]" expression="#[payload]"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="APIKIT:UNSUPPORTED_MEDIA_TYPE" doc:id="668670a1-0020-49c6-b4fe-10567e5866ab" expectedErrorType="APIKIT:UNSUPPORTED_MEDIA_TYPE">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="929759d0-d158-4c35-be37-fe0c19791f92" processor="apikit:router">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="e-commerce-api-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="APIKIT:UNSUPPORTED_MEDIA_TYPE" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow Reference" doc:id="83e736e4-6392-44fb-9e38-bbc7aa7397cf" name="e-commerce-api-main"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="6002b7cd-58d3-4425-bfa9-ce6cc0ab798f" is="#[MunitTools::notNullValue()]" expression="#[payload]"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="APIKIT:NOT_IMPLEMENTED" doc:id="2e4c5d91-a7f5-4e92-986e-ff3240f3a5cc" expectedErrorType="APIKIT:NOT_IMPLEMENTED">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="965c5db6-7016-465b-8639-bffb24f19fe4" processor="apikit:router">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="e-commerce-api-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="APIKIT:NOT_IMPLEMENTED" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow Reference" doc:id="5cfee88a-181f-4de8-9f18-b498b8b7e927" name="e-commerce-api-main"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="f8462384-5eaf-432f-8ddc-3fdfa6a3270d" is="#[MunitTools::notNullValue()]" expression="#[payload]"/>
+		</munit:validation>
+	</munit:test>
+
+
+</mule>
